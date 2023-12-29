@@ -18,6 +18,12 @@ function App() {
 
  // Trabajar en este primero, el post.
   const agregarPost = async () => {
+
+    if (titulo.trim() === "" || imgSrc.trim() === "" || descripcion.trim() === "") {
+      alert("Por favor, completa todos los campos");
+      return;
+    }
+
     const post = { titulo, url: imgSrc, descripcion };
     await axios.post(urlBaseServer + "/posts", post);
     getPosts();
@@ -31,6 +37,7 @@ function App() {
 
   // este método se utilizará en el siguiente desafío
   const eliminarPost = async (id) => {
+    // console.log("ID Front: ",id);
     await axios.delete(urlBaseServer + `/posts/${id}`);
     getPosts();
   };

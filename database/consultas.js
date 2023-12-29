@@ -33,4 +33,28 @@ const getPosts = async () => {
   }
 };
 
- export {agregarPost,getPosts};
+const deletePosts = async (id) => {
+  try {
+    await pool.query("DELETE FROM posts WHERE id=$1", [id]);
+  } catch (error) {
+    console.error("Error al eliminar el posts", error.message);
+    throw error;
+  }
+};
+
+const likePost = async (id) => {
+  try {
+    // Obtener el valor actual de likes
+    const { rows } = await pool.query("SELECT likes FROM posts WHERE id=$1", [id]);
+    const nuevoValorLikes = rows[0].likes === 0 ? 1 : 0;
+
+    const result = await pool.query("UPDATE posts SET likes=$1 WHERE id=$2 RETURNING *", [nuevoValorLikes, id]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error al dar like en el posts", error.message);
+    throw error;
+  }
+};
+
+
+ export {agregarPost,getPosts,deletePosts,likePost};

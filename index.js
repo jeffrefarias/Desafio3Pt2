@@ -1,4 +1,4 @@
-import { agregarPost,getPosts } from './database/consultas.js';
+import { agregarPost,getPosts,deletePosts,likePost } from './database/consultas.js';
 import express from 'express';
 import cors from 'cors'
 
@@ -15,6 +15,7 @@ app.listen(PORT, () => {
     console.log(`Server en puerto: http://localhost:${PORT}`);
 })
 
+// Select all posts
 app.post("/posts", async (req, res) => {
 
     try {
@@ -27,7 +28,7 @@ app.post("/posts", async (req, res) => {
     }    
    })
    
-
+// Insert Posts
    app.get("/posts", async (req, res) => {
     try {
         const result = await getPosts();
@@ -35,7 +36,39 @@ app.post("/posts", async (req, res) => {
         return res.status(200).json({ ok: true, message: "Posts registrados en tabla", result }); 
     } catch (error) {
         console.log(error);
-        // const { status, message } = handleErrors(error.code);
-        return res.status(500).json({ ok: false, result: "Error al obtener el post"  }); //respuesta del servidor
+        return res.status(500).json({ ok: false, result: "Error al insertar el post"  }); //respuesta del servidor
     }
 });
+
+
+// Delete post
+
+
+app.delete("/posts/:id", async (req, res) => {
+    const {id} = req.params;
+    try {
+        await deletePosts(id);
+        const result = await getPosts();
+        //respuesta del servidor
+        return res.status(200).json({ ok: true, message: "Posts eliminado", result }); 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ ok: false, result: "Error al eliminar el post"  }); //respuesta del servidor
+    }
+});
+
+// Update post
+
+app.put("/posts/like/:id", async (req, res) => {
+    const {id} = req.params;
+    try {
+        await likePost(id);
+        const result = await getPosts();
+        //respuesta del servidor
+        return res.status(200).json({ ok: true, message: "Posts con like", result }); 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ ok: false, result: "Error al dar like al post"  }); //respuesta del servidor
+    }
+});
+
